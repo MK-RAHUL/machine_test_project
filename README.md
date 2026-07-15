@@ -27,7 +27,6 @@ src/
   components/
     Navbar.jsx            sticky nav, scroll-spy, hamburger menu
     Hero.jsx               hero copy, phone mockup + scroll reveal, text-reveal sequence
-    WhoItsFor.jsx          orbiting/spiraling industry badges around the logo
     PlatformPreview.jsx    scroll card-stacking dashboard preview
     Footer.jsx             lazy-loaded background video, watermark, link columns
 

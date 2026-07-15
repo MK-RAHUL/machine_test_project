@@ -1,6 +1,5 @@
 import Navbar from './components/Navbar'
 import Hero from './components/Hero'
-import WhoItsFor from './components/WhoItsFor'
 import PlatformPreview from './components/PlatformPreview'
 import Footer from './components/Footer'
 
@@ -16,7 +15,6 @@ export default function App() {
       <Navbar />
       <main id="main">
         <Hero />
-        <WhoItsFor />
         <PlatformPreview />
       </main>
       <Footer />
