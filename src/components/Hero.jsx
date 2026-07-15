@@ -1,7 +1,7 @@
 import { useLayoutEffect, useRef } from 'react'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import { Play, ArrowUpRight, ShieldCheck } from 'lucide-react'
+import { Play, ArrowUpRight, Layers } from 'lucide-react'
 import useReducedMotion from '../hooks/useReducedMotion'
 
 gsap.registerPlugin(ScrollTrigger)
@@ -17,6 +17,8 @@ export default function Hero() {
 
   const heroContentRef = useRef(null)
   const phoneGroupRef = useRef(null)
+  const leftCardRef = useRef(null)
+  const rightCardRef = useRef(null)
 
   const backWaveRef = useRef(null)
   const frontWaveRef = useRef(null)
@@ -33,31 +35,33 @@ export default function Hero() {
       const lines = textLinesRef.current.filter(Boolean)
 
       /*
-       * =====================================================
-       * INITIAL STATE Setup
-       * =====================================================
+       * INITIAL STATE SETUP
        */
       gsap.set(heroContentRef.current, {
         autoAlpha: 1,
         y: 0,
       })
 
-      // Position phone lower initially so it climbs up beautifully
       gsap.set(phoneGroupRef.current, {
-        y: '20vh', 
+        y: '25vh', 
         scale: 1,
         autoAlpha: 1,
       })
 
-      // We pull the wave containers up from 'top-full' (100% viewport top) 
-      // so that only their curves are visible at the bottom of the screen.
+      gsap.set(leftCardRef.current, {
+        top: '5%',
+      })
+      gsap.set(rightCardRef.current, {
+        top: '25%',
+      })
+
       gsap.set(backWaveRef.current, {
-        y: '-340px', // Matches the curve height
+        y: '-340px',
         autoAlpha: 1,
       })
 
       gsap.set(frontWaveRef.current, {
-        y: '-280px', // Matches the curve height
+        y: '-280px',
         autoAlpha: 1,
       })
 
@@ -66,14 +70,13 @@ export default function Hero() {
         y: 40,
       })
 
+      // Set initial text color to dim matching the orange/cream background
       gsap.set(lines, {
-        color: '#CFC8BD',
+        color: 'rgba(23, 23, 23, 0.35)',
       })
 
       /*
-       * =====================================================
-       * SCROLLTRIGGER TIMELINE CREATION
-       * =====================================================
+       * SCROLLTRIGGER TIMELINE
        */
       const tl = gsap.timeline({
         scrollTrigger: {
@@ -87,11 +90,7 @@ export default function Hero() {
         },
       })
 
-      /*
-       * =====================================================
-       * STEP 1: Hero Text Fades Out Fast (Prevents collapse overlay)
-       * =====================================================
-       */
+      // STEP 1: Hero Text Fades Out Fast
       tl.to(
         heroContentRef.current,
         {
@@ -103,37 +102,47 @@ export default function Hero() {
         0
       )
 
-      /*
-       * =====================================================
-       * STEP 2: Phone Slides Up (Exposing 90% of its body)
-       * Stops with its bottom 10% still masked safely behind the waves.
-       * =====================================================
-       */
+      // STEP 2: Phone rises upward
       tl.to(
         phoneGroupRef.current,
         {
-          y: '-38vh', 
+          y: '-10vh',
           scale: 1.02,
-          duration: 0.35,
-          ease: 'power2.out',
+          duration: 0.25,
+          ease: 'power1.out',
         },
-        0.08
+        0
       )
 
-      /*
-       * =====================================================
-       * STEP 3: Waves Swell Upward to Fill the Entire Screen
-       * Pulls the 200vh high curtain tail completely over the viewport.
-       * =====================================================
-       */
+      tl.to(
+        leftCardRef.current,
+        {
+          top: '20%',
+          duration: 0.25,
+          ease: 'power1.out',
+        },
+        0
+      )
+
+      tl.to(
+        rightCardRef.current,
+        {
+          top: '40%',
+          duration: 0.25,
+          ease: 'power1.out',
+        },
+        0
+      )
+
+      // STEP 3: Wave Swoop slides UP to cover the screen
       tl.to(
         frontWaveRef.current,
         {
-          y: '-200vh', // Slides the solid curtain tail up to cover 100% of the screen
+          y: '-200vh', 
           duration: 0.45,
           ease: 'power2.inOut',
         },
-        0.4
+        0.3
       )
 
       tl.to(
@@ -143,44 +152,20 @@ export default function Hero() {
           duration: 0.45,
           ease: 'power2.inOut',
         },
-        0.4
+        0.3
       )
 
-      /*
-       * =====================================================
-       * STEP 4: Hide old phone / content behind the curtain
-       * =====================================================
-       */
+      // STEP 4: Hide phone when wave covers it
       tl.to(
         phoneGroupRef.current,
         {
           autoAlpha: 0,
-          duration: 0.1,
+          duration: 0.05,
         },
-        0.6
+        0.55
       )
 
-      /*
-       * =====================================================
-       * STEP 5: Clear waves upward to reveal the clean cream backdrop
-       * =====================================================
-       */
-      tl.to(
-        [frontWaveRef.current, backWaveRef.current],
-        {
-          y: '-300vh',
-          autoAlpha: 0,
-          duration: 0.35,
-          ease: 'power2.in',
-        },
-        0.7
-      )
-
-      /*
-       * =====================================================
-       * STEP 6: Reveal lines fade in and light up sequentially
-       * =====================================================
-       */
+      // STEP 5: Keep waves filling the screen context to hold the reveal text content
       tl.to(
         textSectionRef.current,
         {
@@ -189,20 +174,34 @@ export default function Hero() {
           duration: 0.25,
           ease: 'power2.out',
         },
-        0.95
+        0.55
       )
 
+      // STEP 6: Highlighting text lines sequentially against the wave gradient bg
       lines.forEach((line, index) => {
         tl.to(
           line,
           {
-            color: '#171717',
+            color: '#171717', // Changes to solid deep color on scroll
             duration: 0.25,
             ease: 'none',
           },
-          1.1 + index * 0.22
+          0.7 + index * 0.25
         )
       })
+
+      // STEP 7: Exit waves and transition to the next section
+      tl.to(
+        [frontWaveRef.current, backWaveRef.current, textSectionRef.current],
+        {
+          y: '-300vh',
+          autoAlpha: 0,
+          duration: 0.35,
+          ease: 'power2.in',
+        },
+        1.3
+      )
+
     }, rootRef)
 
     return () => ctx.revert()
@@ -250,7 +249,6 @@ export default function Hero() {
             text-center
           "
         >
-          {/* Main heading */}
           <h1
             className="
               max-w-[900px]
@@ -281,7 +279,6 @@ export default function Hero() {
             </span>
           </h1>
 
-          {/* Subtitle */}
           <p
             className="
               mt-7
@@ -299,7 +296,6 @@ export default function Hero() {
             lorem ipsum Lorem ipsum lorem ipsum
           </p>
 
-          {/* Buttons */}
           <div className="mt-8 flex items-center gap-3">
             <button
               type="button"
@@ -355,9 +351,7 @@ export default function Hero() {
           </div>
         </div>
 
-        {/* =====================================================
-            BACK WAVE (Extended 200vh height curtain tail)
-        ====================================================== */}
+        {/* BACK WAVE */}
         <div
           ref={backWaveRef}
           aria-hidden="true"
@@ -373,7 +367,6 @@ export default function Hero() {
             flex-col
           "
         >
-          {/* SVG curve top */}
           <div className="h-[340px] w-full shrink-0">
             <svg
               viewBox="0 0 1440 340"
@@ -405,7 +398,6 @@ export default function Hero() {
               />
             </svg>
           </div>
-          {/* Continuous bottom cover block */}
           <div className="w-full grow bg-[#F8E9D2]" />
         </div>
 
@@ -415,111 +407,126 @@ export default function Hero() {
           className="
             pointer-events-none
             absolute
-            bottom-[-150px]
+            bottom-[-80px]
             left-1/2
             z-20
             w-[290px]
             -translate-x-1/2
-            sm:bottom-[-250px]
+            sm:bottom-[-120px]
             sm:w-[330px]
-            md:bottom-[-120px]
+            md:bottom-[-70px]
             md:w-[360px]
           "
         >
           <img
             src="/images/iPhone 14 Pro.png"
-            alt="Lorem verification dashboard shown on a phone"
+            alt="Lorem verification dashboard"
             className="relative z-10 w-full"
           />
 
           {/* LEFT FLOATING CARD */}
           <div
+            ref={leftCardRef}
             className="
               absolute
               left-[-34%]
-              top-[5%]
               z-30
-              w-[165px]
-              rounded-[14px]
+              w-[160px]
+              h-[72px]
+              rounded-[16px]
               border
-              border-white/90
-              bg-white/30
+              border-white/80
+              bg-white/40
               px-3
-              py-2.5
               text-left
-              shadow-[0_12px_40px_rgba(255,255,255,0.35)]
+              shadow-[0_8px_32px_rgba(0,0,0,0.06)]
               backdrop-blur-xl
+              flex
+              items-center
+              gap-2.5
             "
           >
-            <div className="mb-1 flex -space-x-1.5">
-              {[0, 1, 2, 3].map((item) => (
+            <div className="flex flex-col -space-y-3 shrink-0">
+              {[1, 2, 3, 4].map((num) => (
                 <span
-                  key={item}
+                  key={num}
+                  style={{ backgroundImage: `url('/images/user${num}.jpg')` }}
                   className="
-                    h-6
-                    w-6
+                    h-[26px]
+                    w-[26px]
                     rounded-full
-                    border-2
+                    border-[1.5px]
                     border-white
-                    bg-gradient-to-br
-                    from-[#E88F00]
-                    to-[#D9D9D9]
+                    bg-cover
+                    bg-center
+                    bg-no-repeat
+                    shadow-sm
                   "
                 />
               ))}
             </div>
-            <p className="text-[17px] font-medium leading-none text-[#171717]">
-              250+
-            </p>
-            <p className="mt-1 text-[9px] text-[#171717]/55">
-              trusted organizations
-            </p>
+
+            <div className="flex flex-col justify-center min-w-0">
+              <p className="text-[18px] font-semibold leading-tight text-[#111111] tracking-tight">
+                250+
+              </p>
+              <p className="text-[9.5px] leading-tight text-[#555555]/85 font-normal mt-0.5 whitespace-normal">
+                trusted organizations
+              </p>
+            </div>
           </div>
 
           {/* RIGHT FLOATING CARD */}
           <div
+            ref={rightCardRef}
             className="
               absolute
               right-[-39%]
-              top-[25%]
               z-30
-              w-[175px]
-              rounded-[14px]
+              w-[160px]
+              h-[72px]
+              rounded-[16px]
               border
-              border-white/90
-              bg-white/30
+              border-white/80
+              bg-white/40
               px-3
-              py-2.5
               text-left
-              shadow-[0_12px_40px_rgba(255,255,255,0.35)]
+              shadow-[0_8px_32px_rgba(0,0,0,0.06)]
               backdrop-blur-xl
+              flex
+              items-center
+              gap-2.5
             "
           >
             <div
               className="
-                mb-1
                 grid
-                h-6
-                w-6
+                h-[28px]
+                w-[28px]
+                shrink-0
                 place-items-center
                 rounded-full
-                bg-[#F8E9D2]
+                border
+                border-white/60
+                bg-white/30
+                shadow-inner
               "
             >
-              <ShieldCheck className="h-3.5 w-3.5 text-[#E88F00]" />
+              <Layers className="h-3.5 w-3.5 text-white" />
             </div>
-            <p className="text-[17px] font-medium leading-none text-[#171717]">
-              10,000+
-            </p>
-            <p className="mt-1 text-[9px] leading-[1.25] text-[#171717]/55">
-              credentials verified securely
-            </p>
+
+            <div className="flex flex-col justify-center min-w-0">
+              <p className="text-[18px] font-semibold leading-tight text-[#111111] tracking-tight">
+                10,000+
+              </p>
+              <p className="text-[9.5px] leading-tight text-[#555555]/85 font-normal mt-0.5 whitespace-normal">
+                credentials verified securely
+              </p>
+            </div>
           </div>
         </div>
 
-        {/* =====================================================
-            FRONT WAVE (Extended 200vh height curtain tail with matching gradient)
-        ====================================================== */}
+        {/* FRONT WAVE */}
         <div
           ref={frontWaveRef}
           aria-hidden="true"
@@ -535,7 +542,6 @@ export default function Hero() {
             flex-col
           "
         >
-          {/* SVG curve top */}
           <div className="h-[280px] w-full shrink-0">
             <svg
               viewBox="0 0 1440 280"
@@ -581,11 +587,10 @@ export default function Hero() {
               />
             </svg>
           </div>
-          {/* Continuous bottom cover block matching the wave's horizontal gradient */}
           <div className="w-full grow bg-gradient-to-r from-[#FFF7E9] via-[#F9E8C8] to-[#F4B43D]" />
         </div>
 
-        {/* REVEAL TEXT SECTION */}
+        {/* REVEAL TEXT OVER THE SOLID WAVE GRADIENT */}
         <div
           ref={textSectionRef}
           className="
@@ -596,7 +601,6 @@ export default function Hero() {
             items-center
             justify-center
             px-8
-            text-center
             opacity-0
           "
         >
@@ -610,12 +614,11 @@ export default function Hero() {
                 className={`
                   text-[38px]
                   font-light
-                  leading-[1.08]
+                  leading-[1.12]
                   tracking-[-0.04em]
-                  text-[#CFC8BD]
+                  transition-colors
                   md:text-[52px]
                   lg:text-[60px]
-                  ${index > 0 ? 'mt-20' : ''}
                 `}
               >
                 {line}
