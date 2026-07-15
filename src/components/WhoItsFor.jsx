@@ -15,9 +15,6 @@ const BADGES = [
 ]
 
 const START_RADIUS = 210
-const END_RADIUS = 116
-const START_ANGLE = -90 // first badge starts at top
-const TOTAL_ROTATION = 260 // degrees, clockwise
 const BADGE_HALF_WIDTH = 70 // half of the badge pill width, mobile-safe estimate
 
 export default function WhoItsFor() {
@@ -27,6 +24,8 @@ export default function WhoItsFor() {
   const badgeRefs = useRef([])
   const ringRefs = useRef([])
   const reduced = useReducedMotion()
+
+const gradientRef = useRef(null)
 
   useLayoutEffect(() => {
     const ctx = gsap.context(() => {
@@ -38,23 +37,33 @@ export default function WhoItsFor() {
         radiusScale = Math.min(1, Math.max(0.35, maxAllowedRadius / START_RADIUS))
       }
 
-      const setBadgePosition = (progress) => {
-        const rotation = START_ANGLE + progress * TOTAL_ROTATION
-        const radius = gsap.utils.interpolate(START_RADIUS, END_RADIUS, progress) * radiusScale
-        BADGES.forEach((_, i) => {
-          const el = badgeRefs.current[i]
-          if (!el) return
-          const angleDeg = rotation + (360 / BADGES.length) * i
-          const angleRad = (angleDeg * Math.PI) / 180
-          const x = Math.cos(angleRad) * radius
-          const y = Math.sin(angleRad) * radius
-          gsap.set(el, { x, y })
-        })
-        ringRefs.current.forEach((ring, i) => {
-          if (!ring) return
-          gsap.set(ring, { rotate: rotation * (0.3 + i * 0.15) })
-        })
-      }
+const setBadgePosition = (progress) => {
+  const rotation = progress * 360
+  const radius = START_RADIUS * radiusScale
+
+  BADGES.forEach((_, i) => {
+    const badge = badgeRefs.current[i]
+    if (!badge) return
+
+    const angle =
+      ((360 / BADGES.length) * i + rotation - 90) *
+      (Math.PI / 180)
+
+    const x = Math.cos(angle) * radius
+    const y = Math.sin(angle) * radius
+
+    gsap.set(badge, {
+      x,
+      y,
+      rotation: 0,
+    })
+  })
+
+  gsap.set(gradientRef.current, {
+    rotation,
+    transformOrigin: "50% 50%",
+  })
+}
 
       computeScale()
       // Initial resting layout
@@ -100,25 +109,25 @@ export default function WhoItsFor() {
 
         <div ref={orbitRef} className="relative grid h-[400px] w-full max-w-2xl place-items-center">
           {/* Concentric decorative rings */}
-          {[0, 1, 2].map((i) => (
-            <div
-              key={i}
-              ref={(el) => (ringRefs.current[i] = el)}
-              aria-hidden="true"
-              className="absolute rounded-[70px] border border-amber/20"
-              style={{ width: `${180 + i * 90}px`, height: `${180 + i * 90}px` }}
-            />
-          ))}
+        {[0, 1].map((i) => (
+          <div
+            key={i}
+            className="absolute rounded-[72px] border-[5px] border-white"
+            style={{
+              width: `${250 + i * 60}px`,
+              height: `${250 + i * 60}px`,
+            }}
+          />
+        ))}
 
           <div className="relative z-10 flex items-center justify-center">
 
-            <img
-              src="/images/who_it_is_for_gradient.png"
-              alt=""
-              className="absolute h-[500px]
-w-[500px]
-opacity-100 max-w-none opacity-95"
-            />
+<img
+  ref={gradientRef}
+  src="/images/who_it_is_for_gradient.png"
+  alt=""
+  className="absolute h-[360px] w-[360px] object-contain pointer-events-none"
+/>
 
             <div className="relative flex h-[210px]
 w-[210px]
@@ -126,7 +135,7 @@ rounded-[58px] items-center justify-center border-[3px] border-white bg-white/10
 
               <div className="flex h-[70px]
 w-[70px]
-rounded-[20px] items-center justify-center border-2 border-white bg-white shadow-xl">
+rounded-[20px] items-center justify-center border-2 border-white bg-white/10 shadow-xl">
 
                 <img
                   src="/images/logo.png"

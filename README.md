@@ -30,7 +30,7 @@ src/
     WhoItsFor.jsx          orbiting/spiraling industry badges around the logo
     PlatformPreview.jsx    scroll card-stacking dashboard preview
     Footer.jsx             lazy-loaded background video, watermark, link columns
-    Logo.jsx
+
   hooks/
     useReducedMotion.js    matchMedia('prefers-reduced-motion') hook used everywhere motion is scripted
 ```

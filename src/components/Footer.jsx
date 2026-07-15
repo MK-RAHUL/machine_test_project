@@ -5,7 +5,6 @@ import {
   Phone,
 } from "lucide-react";
 import { FaInstagram, FaLinkedin, FaMailBulk } from "react-icons/fa";
-import Logo from './Logo'
 import useReducedMotion from '../hooks/useReducedMotion'
 
 
