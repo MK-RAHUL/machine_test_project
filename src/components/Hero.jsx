@@ -75,9 +75,6 @@ export default function Hero() {
       const lines = textLinesRef.current.filter(Boolean)
       const badges = badgeRefs.current.filter(Boolean)
 
-      /* =========================================================
-       * INITIAL STATES
-       * ========================================================= */
       gsap.set(heroContentRef.current, { autoAlpha: 1, y: 0 })
       gsap.set(phoneGroupRef.current, { y: '25vh', scale: 1, autoAlpha: 1 })
       gsap.set(leftCardRef.current, { top: '5%' })
@@ -88,7 +85,6 @@ export default function Hero() {
       gsap.set(lines, { color: '#C5C5C5' })
       gsap.set(whoItsForTextRef.current, { autoAlpha: 0 })
 
-      // Set badges directly to their designated starting coordinates
       badges.forEach((badge, index) => {
         const target = BADGES[index]
         gsap.set(badge, {
@@ -99,9 +95,6 @@ export default function Hero() {
         })
       })
 
-      /* =========================================================
-       * TIMELINE STAGE 1: HERO → WAVES → REVEAL TEXT
-       * ========================================================= */
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: rootRef.current,
@@ -130,21 +123,17 @@ export default function Hero() {
       if (lines[1]) tl.to(lines[1], { color: '#171717', duration: 0.3, ease: 'none' }, 0.9)
       tl.to({}, { duration: 0.12 })
 
-      /* =========================================================
-       * TIMELINE STAGE 2: ROTATION SHIFT (NO ENTRANCE FLIGHT)
-       * ========================================================= */
       const movementTl = gsap.timeline({
         scrollTrigger: {
           trigger: orbitSectionRef.current,
           start: 'top top',
-          end: '+=100%', // Symmetrical scroll distance for the rotation
+          end: '+=100%', 
           scrub: 1,
           pin: true,
           invalidateOnRefresh: true,
         },
       })
 
-      // Shift all badges directly to the NEXT coordinate slot in a single scroll motion
       badges.forEach((badge, index) => {
         const nextTarget = BADGES[(index + 1) % BADGES.length]
         
@@ -155,7 +144,7 @@ export default function Hero() {
             y: nextTarget.y,
             ease: 'power2.inOut',
           },
-          0 // Runs all shifts in parallel instantly upon scrolling
+          0 
         )
       })
 
@@ -166,7 +155,6 @@ export default function Hero() {
 
   return (
     <div ref={wrapperRef} className="relative w-full">
-      {/* SECTION 1 — PINNED HERO */}
       <section id="home" ref={rootRef} className="relative w-full bg-[#F7F7F7]">
         <div ref={pinRef} className="relative h-screen w-full overflow-hidden">
           <img
@@ -206,7 +194,6 @@ export default function Hero() {
             </div>
           </div>
 
-          {/* WAVES & PHONE MOCKUPS SECTIONS CONTAINER */}
           <div ref={backWaveRef} aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-full z-10 flex h-[200vh] w-full flex-col">
             <div className="h-[340px] w-full shrink-0">
               <svg viewBox="0 0 1440 340" preserveAspectRatio="none" className="h-full w-full">
@@ -277,22 +264,18 @@ export default function Hero() {
         </div>
       </section>
 
-      {/* SECTION 2 — RADIAL ORBIT */}
       <section ref={orbitSectionRef} className="relative flex min-h-[100vh] w-full items-center justify-center overflow-hidden bg-[#F7F7F7] px-8 py-[12vh]">
         <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 h-[420px]" style={{ backgroundImage: 'linear-gradient(to right, #FFF7E9, #F9E8C8, #F4B43D)', WebkitMaskImage: 'linear-gradient(to bottom, black, transparent)', maskImage: 'linear-gradient(to bottom, black, transparent)' }} />
 
         <div ref={orbitWrapperRef} className="relative z-10 mx-auto flex h-[700px] w-full max-w-[760px] items-center justify-center">
           
-          {/* BACKGROUND CONCENTRIC SQUIRCLE RINGS */}
           <div className="pointer-events-none absolute h-[620px] w-[620px] rounded-[130px] border-[2px] border-white/70 shadow-[0_0_40px_rgba(255,255,255,0.3)_inset]" />
           <div className="pointer-events-none absolute h-[460px] w-[460px] rounded-[100px] border-[2px] border-white/65 shadow-[0_0_30px_rgba(255,255,255,0.25)_inset]" />
 
-          {/* INNER GLOW SQUIRCLE CONTAINER */}
           <div className="pointer-events-none absolute h-[300px] w-[300px] rounded-[70px] border-2 border-white/60 bg-gradient-to-b from-amber-100/40 via-amber-200/20 to-transparent p-1 backdrop-blur-[2px]">
             <div className="h-full w-full rounded-[64px] bg-gradient-to-b from-[#FFF2D4] to-transparent opacity-80 blur-sm" />
           </div>
 
-          {/* BADGES GRAPHICS CONTAINER */}
           {BADGES.map(({ label, icon }, index) => (
             <div
               key={label}
@@ -308,7 +291,6 @@ export default function Hero() {
             </div>
           ))}
 
-          {/* CENTRAL CORE LOGO BLOCK */}
           <div className="relative z-40 flex h-[100px] w-[100px] items-center justify-center rounded-[28px] border-2 border-white bg-gradient-to-b from-amber-100/40 via-amber-200/20 to-transparent shadow-[0_12px_40px_rgba(232,143,0,0.12)] backdrop-blur-md">
             <div className="flex h-[56px] w-[56px] items-center justify-center rounded-[18px] bg-gradient-to-br from-[#FFF7E9] to-[#F4B43D] p-3 shadow-inner">
               <img src="/images/logo.png" alt="Lorem Logo" className="h-full w-full object-contain" />

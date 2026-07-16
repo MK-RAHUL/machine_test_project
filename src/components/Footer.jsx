@@ -63,7 +63,6 @@ export default function Footer() {
     >
       <div className="relative mx-6 md:mx-10 lg:mx-16 overflow-hidden rounded-t-[32px] rounded-b-none bg-black isolate">
 
-        {/* Background layer: video OR static fallback */}
         <div className="absolute inset-0">
           {!reduced && shouldLoadVideo ? (
             <video
@@ -78,7 +77,6 @@ export default function Footer() {
               <source src="/videos/footer_video.mp4" type="video/mp4" />
             </video>
           ) : (
-            // Static fallback: reduced motion, or video not loaded yet
             <div
               className="absolute inset-0 w-full h-full"
               style={{
@@ -87,14 +85,12 @@ export default function Footer() {
               }}
             />
           )}
-          {/* Dark overlay for text contrast, always present */}
           <div className="absolute inset-0 bg-black/70" />
         </div>
 
         <div className="relative z-10 px-8 sm:px-12 md:px-16 pt-14 pb-0 flex flex-col">
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 sm:gap-14">
-            {/* Product */}
             <div>
               <h3 className="text-white text-xl font-medium mb-7">Product</h3>
               <ul className="space-y-3 text-white/70">
@@ -108,7 +104,6 @@ export default function Footer() {
               </ul>
             </div>
 
-            {/* Company */}
             <div>
               <h3 className="text-white text-xl font-medium mb-7">Company & Resources</h3>
               <ul className="space-y-3 text-white/70">
@@ -122,7 +117,6 @@ export default function Footer() {
               </ul>
             </div>
 
-            {/* Contact */}
             <div>
               <h3 className="text-white text-xl font-medium mb-7">Contact</h3>
               <div className="space-y-4 text-white/70">
@@ -137,7 +131,6 @@ export default function Footer() {
               </div>
             </div>
 
-            {/* Social */}
             <div className="flex flex-col justify-between">
               <div>
                 <h3 className="text-white text-xl font-medium mb-7">Connect</h3>
@@ -158,7 +151,6 @@ export default function Footer() {
             </div>
           </div>
 
-          {/* Bottom */}
           <div className="mt-10 pb-16 flex justify-end shrink-0">
             <p className="text-sm text-white/45">
               © 2026 Lorem.app. All rights reserved.

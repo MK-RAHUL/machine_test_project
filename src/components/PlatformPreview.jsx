@@ -28,14 +28,8 @@ const CARDS = [
   },
 ];
 
-// Card layout switches from side-by-side (desktop) to stacked (tablet/mobile)
-// at this breakpoint, so the pixel dimensions below are tied to the same value.
-const STACK_BREAKPOINT = 1024; // matches Tailwind's `lg`
+const STACK_BREAKPOINT = 1024;
 
-// Per-breakpoint pixel dimensions for the pinned scroll animation.
-// Stacked layouts need a taller card (title+desc+image all stacked) and a
-// taller "peek strip" (HEADER_HEIGHT), since the title block itself is taller
-// than the single compact row it occupies on desktop.
 function getDims() {
   if (typeof window === "undefined") {
     return { cardHeight: 640, headerHeight: 150, breakpoint: "desktop" };
@@ -58,9 +52,6 @@ export default function PlatformPreview() {
   const reducedMotion = useReducedMotion();
   const [dims, setDims] = useState(getDims);
 
-  // Only rebuild the GSAP timeline when the breakpoint category actually
-  // changes (not on every resize pixel), to avoid constant re-inits while
-  // dragging a window edge.
   useLayoutEffect(() => {
     const onResize = () => {
       setDims((prev) => {
@@ -77,7 +68,6 @@ export default function PlatformPreview() {
 
     const { headerHeight } = dims;
 
-    // Smooths out scroll-input jitter globally, not just for this component
     gsap.ticker.lagSmoothing(500, 33);
 
     const ctx = gsap.context(() => {
@@ -91,7 +81,7 @@ export default function PlatformPreview() {
           y: index === 0 ? 0 : "100%",
           zIndex: index + 1,
           autoAlpha: 1,
-          force3D: true, // keeps this on the GPU compositor, avoids repaint cost
+          force3D: true, 
         });
       });
 
@@ -101,7 +91,7 @@ export default function PlatformPreview() {
           start: "top top",
           end: () => `+=${window.innerHeight * total}`,
           pin: pinRef.current,
-          scrub: 0.6, // was `true` — this adds a small smoothing lag
+          scrub: 0.6,
           anticipatePin: 1,
           invalidateOnRefresh: true,
         },
@@ -122,10 +112,6 @@ export default function PlatformPreview() {
 
       const lastCardArrivesAt = total - 1;
 
-      // Fade the covered cards out DURING the last 0.3s of the cover
-      // tween instead of snapping the instant it lands. This overlaps
-      // with the tail end of the slide, so it reads as one continuous
-      // motion rather than slide-then-cut.
       tl.to(
         cards.slice(0, total - 1),
         { autoAlpha: 0, duration: 0.3, ease: "none" },
@@ -135,9 +121,6 @@ export default function PlatformPreview() {
       tl.to({}, { duration: 0.3 });
     }, sectionRef);
 
-    // Preload images BEFORE building/refreshing ScrollTrigger positions,
-    // so refresh() never has to fire again mid-scroll due to a late-
-    // loading image changing layout height underneath the user.
     const images = sectionRef.current.querySelectorAll("img");
     let loaded = 0;
     const checkDone = () => {
@@ -179,7 +162,6 @@ export default function PlatformPreview() {
           </div>
         </div>
 
-        {/* Card Stack */}
         <div
           className="relative mx-auto w-full max-w-7xl"
           style={{ height: `${cardHeight}px` }}
