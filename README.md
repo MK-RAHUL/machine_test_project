@@ -1,4 +1,4 @@
-# Lorem — UI/UX Developer Test
+# UI/UX Developer Test
 
 A recreation of the reference design (`website_flow.mp4`) built with **React**, **Vite**, **Tailwind CSS**, and **GSAP/ScrollTrigger**.
 
@@ -135,7 +135,7 @@ It includes five animated industry badges:
 * Universities & Training Institutes
 * HR & Recruitment Firms
 
-The badges are positioned around a central Lorem logo and animate around the orbit during scrolling.
+The badges are positioned around a central logo and animate around the orbit during scrolling.
 
 The badge icons are loaded from:
 
